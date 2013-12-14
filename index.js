@@ -175,6 +175,14 @@ function run_xhr(options) {
     clearTimeout(xhr.timeoutTimer)
     xhr.statusCode = xhr.status // Node request compatibility
 
+    xhr.headers = xhr.getAllResponseHeaders().split('\r\n').reduce(function(headers, header) {
+      var pair = header.split(": ");
+      if (pair[0]) {
+        headers[pair[0]] = pair[1];
+      }
+      return headers;
+    }, {});
+
     // Detect failed CORS requests.
     if(is_cors && xhr.statusCode == 0) {
       var cors_err = new Error('CORS request rejected: ' + options.uri)
